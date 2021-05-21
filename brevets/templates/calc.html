@@ -62,9 +62,13 @@
                   </select>
                </div>
                <!-- columns 1 to 4  -->
-               <div class="col-md-6">
+               <div class="col-md-4">
                   <label>Begins at</label>
                   <input type="datetime-local" name="begin_date" id="begin_date" value="2021-01-01T00:00" />
+               </div>
+               <div class="col-md-4">
+                  <button id="submit">Submit</button>
+                  <button id="display">Display</button>
                </div>
                <!-- columns 5 to 10 -->
             </div>
@@ -115,6 +119,7 @@
          <script type="text/javascript">
             var SCRIPT_ROOT = {{ request.script_root|tojson|safe }} ;
             var TIME_CALC_URL = SCRIPT_ROOT + "/_calc_times";
+            var SUBMIT_URL = SCRIPT_ROOT + "/_submit_values";
 
             var NUM_ROWS = 20;
             var input_fields = new Array(NUM_ROWS).fill(NaN);
@@ -187,8 +192,8 @@
                // Update the list of inputs that the user has entered
                input_fields[control[0].id] = input_dist;
                
-               console.log(input_fields);
-               console.log(brevet_dist);
+               //console.log(input_fields);
+               //console.log(brevet_dist);
 
                // Check if the user has inputted a distance at least to the brevet distance
                var has_final_dist = false;
@@ -201,7 +206,7 @@
                // Check if the values inputted are sorted
                var is_ascending = check_sorted(input_fields);
 
-               console.log(has_final_dist);
+               //console.log(has_final_dist);
 
                // Display the proper warnings 
                $(".warnings").text("")
@@ -297,8 +302,36 @@
                         }
                      }
                   });
+            });
 
-               });
+
+            $("#submit").click(
+               function(event) {
+                  // Change the default behavior of the button
+                  event.preventDefault();
+
+                  var entries = [];
+                  // For each input row, add to the list if it is non-empty
+                  $(".control").each(
+                     function(index, elem) {
+                        var kmInput = $(elem).find("input[name='km']");
+                        if (kmInput.val()) {
+                           var currEntry = {
+                              index: index,
+                              miles: $(elem).find("input[name='miles']").val(),
+                              km: kmInput.val(),
+                              open: $(elem).find("input[name='open']").val(),
+                              close: $(elem).find("input[name='close']").val()
+                           };
+                           entries.push(currEntry);
+                        }
+                     }
+                  );
+                  $.post(SUBMIT_URL, {entries: entries}, function(response) {
+                     console.log("response", response);
+                  });
+               } 
+            );
 
          </script>
       </div>

@@ -9,6 +9,8 @@ from flask import request
 import arrow  # Replacement for datetime, based on moment.js
 import acp_times  # Brevet time calculations
 import config
+import os
+from pymongo import MongoClient
 
 import logging
 
@@ -17,6 +19,9 @@ import logging
 ###
 app = flask.Flask(__name__)
 CONFIG = config.configuration()
+
+client = MongoClient('mongodb://' + os.environ['MONGODB_HOSTNAME'], 27017)
+db = client.brevetdb
 
 ###
 # Pages
@@ -34,6 +39,7 @@ def index():
 def page_not_found(error):
     app.logger.debug("Page not found")
     return flask.render_template('404.html'), 404
+
 
 
 ###############
@@ -65,6 +71,25 @@ def _calc_times():
     result = {"open": open_time, "close": close_time}
     return flask.jsonify(result=result)
 
+@app.route("/_submit_values", methods=["POST"])
+def submit_values():
+    app.logger.debug("Got a submit request")
+    entries = request.form
+
+    db.brevetdb.drop()
+
+    numInputs = len(entries) // 5
+    fields = ['index', 'miles', 'km', 'open', 'close']
+    for i in range(numInputs):
+        item = {}
+        for field in fields:
+            item[field] = entries['entries[' + str(i) + '][' + field + ']']
+            # app.logger.debug(entries['entries[' + str(i) + '][' + field + ']'])
+        db.brevetdb.insert_one(item)
+
+    # app.logger.debug(entries)
+    result = {"delivered": True}
+    return flask.jsonify(response=result)
 
 #############
 
