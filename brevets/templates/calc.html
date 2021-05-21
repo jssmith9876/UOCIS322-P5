@@ -115,6 +115,7 @@
             </div>
             <!-- row -->
             <div class="warnings"></div>
+            <div class="submit-result"></div>
          </form>
          <script type="text/javascript">
             var SCRIPT_ROOT = {{ request.script_root|tojson|safe }} ;
@@ -327,10 +328,27 @@
                         }
                      }
                   );
-                  $.post(SUBMIT_URL, {entries: entries}, function(response) {
-                     console.log("response", response);
-                  });
+                  if ($(".warnings").text().length > 0) {
+                     $(".submit-result").text("Submission failure: Warnings must be addressed before submission");
+                  } else {
+                     $.post(SUBMIT_URL, {entries: entries}, function(response) {
+                        if (response.response.delivered) {
+                           $(".submit-result").text("Control times have been successfully submitted!");
+                        }
+                        else {
+                           $(".submit-result").text("Something went wrong...");
+                        }
+                     });
+                  }
                } 
+            );
+
+            $("#display").click(
+               function(event) {
+                  event.preventDefault();
+
+                  location.replace("/display_results");
+               }
             );
 
          </script>

@@ -34,6 +34,10 @@ def index():
     app.logger.debug("Main page entry")
     return flask.render_template('calc.html')
 
+@app.route("/display_results")
+def display_results():
+    return flask.render_template("display_results.html",
+                                items=list(db.brevetdb.find()))
 
 @app.errorhandler(404)
 def page_not_found(error):
@@ -62,10 +66,6 @@ def _calc_times():
     start_time = arrow.get(start_time)
     app.logger.debug("km={}".format(km))
     app.logger.debug("request.args: {}".format(request.args))
-    # FIXME!
-    # Right now, only the current time is passed as the start time
-    # and control distance is fixed to 200
-    # You should get these from the webpage!
     open_time = acp_times.open_time(km, dist, start_time).format('YYYY-MM-DDTHH:mm')
     close_time = acp_times.close_time(km, dist, start_time).format('YYYY-MM-DDTHH:mm')
     result = {"open": open_time, "close": close_time}
@@ -84,7 +84,6 @@ def submit_values():
         item = {}
         for field in fields:
             item[field] = entries['entries[' + str(i) + '][' + field + ']']
-            # app.logger.debug(entries['entries[' + str(i) + '][' + field + ']'])
         db.brevetdb.insert_one(item)
 
     # app.logger.debug(entries)
