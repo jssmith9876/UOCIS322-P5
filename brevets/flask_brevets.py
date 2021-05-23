@@ -8,8 +8,8 @@ import flask
 from flask import request
 import arrow  # Replacement for datetime, based on moment.js
 import acp_times  # Brevet time calculations
+import acp_db     # Database interactions
 import config
-import acp_db
 
 import logging
 
@@ -18,7 +18,6 @@ import logging
 ###
 app = flask.Flask(__name__)
 CONFIG = config.configuration()
-
 
 
 ###
@@ -71,20 +70,28 @@ def _calc_times():
 @app.route("/_submit_values", methods=["POST"])
 def _submit_values():
     app.logger.debug("Got a submit request")
-    entries = request.form
-
+    entries = request.form      # Get the results from the request
+    app.logger.debug(entries)
+    # Drop the table
     acp_db.clear_table()
 
+    insertion_result = True
+
+    # Make the results USEABLE
     numInputs = len(entries) // 5
     fields = ['index', 'miles', 'km', 'open', 'close']
     for i in range(numInputs):
         item = {}
         for field in fields:
             item[field] = entries['entries[' + str(i) + '][' + field + ']']
-        acp_db.insert_time(item)
 
-    # app.logger.debug(entries)
-    result = {"delivered": True}
+        # Insert the time into the db
+        insertion_result = acp_db.insert_time(item)
+        if not insertion_result:
+            break
+
+    # Return the results
+    result = {"delivered": insertion_result}
     return flask.jsonify(response=result)
 
 #############
