@@ -1,76 +1,23 @@
 # UOCIS322 - Project 5 #
-Brevet time calculator with AJAX and MongoDB!
+Brevet time calculator with MongoDB.
 
 ## Overview
+Brevet control opening and closing time calculator.
 
-Store control times from Project 4 in a MongoDB database.
+This calculator calculates its times based on the RUSA ACP controle time calculator.
+For more information: https://rusa.org/pages/acp-brevet-control-times-calculator
 
-### What is in this repository
+## Instructions
+For a given brevet distance, the user must input values that correspond to the control distances (in either miles or kilometers) for the given brevet. 
+The opening and closing time for each control point will then be calculated.
 
-You have a minimal example of `docker-compose` in `DockerMongo`, using which you can connect a Flask app to MongoDB (as demonstrated in class). Refer to the lecture slides for more details on MongoDB and `docker-compose`. Solved `acp_times.py` file will be made available on Canvas under Files after the project due date.
+The control distances MUST:
+* Be listed in ascending order.
+* Have the last distance be at least the total brevet distance.
+* Have all distances be less than 20% longer than the total brevet distance.
 
-## Getting started
+The times can now be submitted using the submit button. Once the button has been clicked, all current times will be stored in a database. The display button next to the submit button will then display the last submitted times to the user. 
 
-You will reuse *your* code from Project 4. Meaning you will get rid of `DockerMongo` (it's just an example, like `minijax` in Project 3), and use ideas from it to make some changes.
+To submit your times, all warnings must be dealt with beforehand. The submission will not complete unless there are no warnings with the checkpoint times. 
 
-Recall that you created a list of open and close control times using AJAX. In this project, you will add the following:
-
-1. Add two buttons `Submit` and `Display` in the ACP calculator page.
-
-2. Upon clicking the `Submit` button, the control times should be inserted into a MongoDB database.
-
-3. Upon clicking the `Display` button, the entries from the database should be displayed in a new page.
-
-Handle error cases appropriately. For example, Submit should return an error if no control times are input. One can imagine many such cases: you'll come up with as many cases as possible.
-
-## Tasks
-
-As always you'll turn in your `credentials.ini` using Canvas, which will point to your repository on GitHub, which should contain:
-
-* `Dockerfile`
-
-* `docker-compose.yml`
-
-* The working application.
-
-* A README.md file that includes not only identifying information (your name) but but also a revised, clear specification of the brevet control time calculation rules (you were supposed to do this for Project 4), with additional information regarding this project.
-
-* An automated `nose` test suite with at least 2 test cases: at least one for the time calculator, and another for DB insertion and retrieval.
-
-## Grading Rubric
-
-* If your code works as expected: 100 points. This includes:
-	* Front-end implementation (`Submit` and `Display`).
-	
-	* Back-end implementation (Connecting to MongoDB, insertion and selection).
-	
-	* AJAX interaction between the frontend and backend (AJAX for `Submit` and `Display`).
-	
-	* Updating `README` with a clear specification (including details from Project 4).
-	
-	* Writing at least 2 correct tests using nose (put them in `tests`, follow Project 3 if necessary), and all should pass.
-
-* If the AJAX logic is not working, **10** points will be docked off. 
-
-* If the logic to insert into or retrieve from the database is wrong, **30** points will be docked off.
-
-* If the README is not clear or missing, up to **15** points will be docked off. 
-
-* If any of the two test cases are incorrect or fail, up to **15** points will be docked off. 
-
-* If none of the functionalities work, 30 points will be given assuming 
-    * The `credentials.ini` is submitted with the correct URL of your repo, and
-    * `Dockerfile` is present 
-    * `docker-compose.yml` works/builds without any errors 
-
-* If none of the functionalities work, 30 points will be given assuming `credentials.ini` is submitted with the correct URL of your repo, `Dockerfile` builds and runs without any errors, and `docker-compose.yml` is correct and works.
-
-* If `docker-compose.yml` is missing, doesn't build or doesn't run, 10 points will be docked off.
-    
-* If `Dockerfile` is missing, doesn't build or doesn't run, 10 points will be docked off.
-	
-* If `credentials.ini` is not submitted or the repo is not found, 0 will be assigned.
-
-## Credits
-
-Michal Young, Ram Durairajan, Steven Walton, Joe Istas.
+## Author: Jordan Smith, jsmith37@uoregon.edu ##
